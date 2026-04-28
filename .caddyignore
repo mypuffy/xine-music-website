@@ -1,0 +1,14 @@
+# Caddy ignore file
+node_modules/
+src/
+public/
+*.md
+package*.json
+tsconfig*.json
+vite.config.ts
+tailwind.config.js
+postcss.config.js
+eslint.config.js
+.git/
+.gitignore
+docker-compose.yml
