@@ -1,0 +1,188 @@
+# Anforderungen und Setup
+
+Dieses Projekt ist ein statisches Vite-Frontend ohne serverseitige Abhängigkeiten.
+
+## System-Anforderungen
+
+- **Node.js**: v18.0.0 oder höher
+- **npm**: v9.0.0 oder höher
+- **Git**: für Versionskontrolle
+- **Docker** (optional): nur für Deployment mit `docker-compose`
+- **Caddy** (optional): Reverse Proxy für Production (siehe `Caddyfile`)
+
+## Projekt-Setup
+
+### 1. Abhängigkeiten installieren
+
+```bash
+npm install
+```
+
+### 2. Umgebungsvariablen konfigurieren
+
+Datei `.env` erstellen (basierend auf `.env.example`):
+
+```bash
+cp .env.example .env
+```
+
+Die Datei enthält Konfigurationen für Supabase und andere Services.
+
+## Verfügbare Befehle
+
+```bash
+# Projekt bauen und Preview starten (Port 5173)
+npm run dev
+
+# Nur Projekt bauen
+npm run build
+
+# Preview-Server starten
+npm run preview
+
+# Code-Qualität prüfen
+npm run lint
+
+# Deployment mit Docker
+npm run deploy
+
+# Docker-Befehle
+npm run docker:build    # Image bauen
+npm run docker:up       # Container starten
+npm run docker:down     # Container stoppen
+npm run docker:logs     # Logs anzeigen
+```
+
+## Technologie-Stack
+
+### Frontend-Framework & Build
+- **React** (v18.3.1): UI-Framework
+- **React Router** (v6.22.0): Routing
+- **Vite** (v5.0.10): Build-Tool und Dev-Server
+- **TypeScript** (v5.5.3): Type-Safety
+
+### Styling
+- **Tailwind CSS** (v3.4.1): Utility-first CSS
+- **PostCSS** (v8.4.35): CSS-Processor
+- **Autoprefixer** (v10.4.18): Browser-Kompatibilität
+
+### UI-Komponenten & Icons
+- **Lucide React** (v0.344.0): Icon-Bibliothek
+
+### Datenbank
+- **Supabase** (v2.94.0): PostgreSQL Datenbank mit Auth
+  - Umgebungsvariablen in `.env`:
+    - `VITE_SUPABASE_URL`: Supabase-Projekt-URL
+    - `VITE_SUPABASE_ANON_KEY`: Anonymer API-Key
+
+### Entwicklungs-Tools
+- **ESLint** (v8.57.0): Linting
+- **Vite Plugin React** (v4.2.1): React-Integration für Vite
+
+### Deployment
+- **Docker**: Containerisierung
+- **Caddy**: Reverse Proxy und HTTPS
+
+## Projektstruktur
+
+```
+├── src/                    # React-Quellcode
+│   ├── components/        # Wiederverwendbare React-Komponenten
+│   │   ├── layout/       # Header, Footer
+│   │   └── ui/           # Button und andere UI-Elemente
+│   ├── pages/            # Seiten-Komponenten
+│   ├── App.tsx           # Haupt-App-Komponente
+│   ├── main.tsx          # Einstiegspunkt
+│   └── index.css         # Globale Styles
+├── public/                # Statische Assets
+├── dist/                  # Gebuildeter Output (Auto-generiert)
+├── vite.config.ts         # Vite-Konfiguration
+├── tailwind.config.js     # Tailwind-Konfiguration
+├── tsconfig.json          # TypeScript-Konfiguration
+├── package.json           # Dependencies und Scripts
+├── .env                   # Lokale Umgebungsvariablen
+├── .env.example           # Template für .env
+├── Caddyfile              # Caddy-Konfiguration für Local Dev
+├── docker-compose.yml     # Docker-Services Definition
+└── deploy.sh              # Deployment-Script
+```
+
+## Entwicklung
+
+### Dev-Server starten
+
+```bash
+npm run dev
+```
+
+Der Server wird auf `http://localhost:5173` gestartet und lädt das Projekt automatisch neu bei Änderungen.
+
+### Code formatieren und prüfen
+
+```bash
+npm run lint
+```
+
+## Production Build
+
+Das Projekt wird vollständig statisch gebaut:
+
+```bash
+npm run build
+```
+
+Output im Verzeichnis `dist/` kann auf jedem statischen Webserver deployed werden.
+
+## Deployment-Optionen
+
+### Docker Deployment
+
+```bash
+# Image bauen
+npm run docker:build
+
+# Container starten
+npm run docker:up
+
+# Logs anzeigen
+npm run docker:logs
+
+# Container stoppen
+npm run docker:down
+```
+
+### Manuelles Deployment
+
+1. Build erstellen: `npm run build`
+2. `dist/`-Verzeichnis auf Webserver kopieren
+3. Server für `.html`-Dateien konfigurieren (SPA-Routing)
+
+## Troubleshooting
+
+### Dependencies aktualisieren
+
+```bash
+npm install
+```
+
+### Cache leeren und rebuild
+
+```bash
+rm -rf node_modules dist
+npm install
+npm run build
+```
+
+### Port 5173 bereits in Benutzung
+
+Alternativen:
+- Anderen Port verwenden: `vite preview --port 5174`
+- Prozess auf Port 5173 beenden
+
+## Browser-Support
+
+Das Projekt unterstützt alle modernen Browser:
+- Chrome 90+
+- Firefox 88+
+- Safari 14+
+- Edge 90+

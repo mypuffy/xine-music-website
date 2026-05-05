@@ -2,17 +2,28 @@ version: '3.8'
 
 services:
   web:
-    image: caddy:2-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Supabase configuration - pass from .env file
+        VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
+        VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
     container_name: jsj-music-web
     restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - ./out:/var/www/html:ro
       - caddy_data:/data
       - caddy_config:/config
+    environment:
+      # Supabase runtime variables (if needed)
+      - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+      - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
+      - LOG_LEVEL=INFO
+    depends_on:
+      - supabase-db
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80"]
       interval: 30s
@@ -20,8 +31,31 @@ services:
       retries: 3
       start_period: 5s
 
+  # Optional: Local Supabase database for development
+  supabase-db:
+    image: postgres:15-alpine
+    container_name: jsj-music-supabase-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: supabase
+      POSTGRES_USER: ${SUPABASE_DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${SUPABASE_DB_PASSWORD:-postgres}
+    volumes:
+      - supabase_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${SUPABASE_DB_USER:-postgres} -d supabase"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    profiles:
+      - dev-db
+
 volumes:
   caddy_data:
     driver: local
   caddy_config:
+    driver: local
+  supabase_data:
     driver: local
